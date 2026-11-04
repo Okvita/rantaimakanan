@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Petualangan Rantai Makanan</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#d9f3ff;--card:#fffdf4;--ink:#2b2a4c;--g:#46c25a;--o:#ff9f43;--b:#4ba3ff;--y:#ffd93d;--p:#ff7eb6;--r:#ff6b6b;--okbg:#d8f7dc;--nobg:#ffe7d1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b2a4a;--card:#2a3358;--ink:#fff8e6;--okbg:#1f4d33;--nobg:#5a3a22}}
+:root[data-theme="dark"]{--bg:#1b2a4a;--card:#2a3358;--ink:#fff8e6;--okbg:#1f4d33;--nobg:#5a3a22}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:'Baloo 2','Comic Sans MS','Trebuchet MS',sans-serif;font-size:18px;line-height:1.35;overflow-x:hidden}
+.cloud{position:fixed;font-size:60px;opacity:.7;animation:drift 30s linear infinite;pointer-events:none}
+@keyframes drift{from{transform:translateX(-120px)}to{transform:translateX(110vw)}}
+#app{max-width:760px;margin:0 auto;padding:14px;position:relative}
+.bar{height:16px;border:3px solid var(--ink);border-radius:20px;background:var(--card);overflow:hidden;margin-bottom:12px}
+.bar i{display:block;height:100%;width:0;background:var(--o);transition:width .5s}
+.card{background:var(--card);border:4px solid var(--ink);border-radius:26px;box-shadow:0 7px 0 var(--ink);padding:20px;animation:pop .45s}
+@keyframes pop{from{transform:scale(.92) translateY(12px);opacity:0}to{transform:none;opacity:1}}
+h1{font-size:34px;margin:6px 0;font-weight:800;line-height:1.1}
+h2{font-size:26px;margin:4px 0 10px;font-weight:800}
+.hero{font-size:76px;text-align:center;animation:bob 2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px) rotate(4deg)}}
+.c{text-align:center}
+.btn{font:inherit;font-weight:800;font-size:19px;color:#2b2a4c;background:var(--y);border:3px solid var(--ink);border-radius:18px;padding:9px 20px;box-shadow:0 5px 0 var(--ink);cursor:pointer;transition:transform .1s,box-shadow .1s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.btn:focus-visible,.opt:focus-visible,.tile:focus-visible,.tab:focus-visible{outline:4px solid var(--b);outline-offset:3px}
+.btn.g{background:var(--g)}.btn.s{background:#fff;font-size:16px}
+.nav{display:flex;justify-content:space-between;margin-top:18px;gap:10px}
+input[type=text],textarea{font:inherit;width:100%;padding:9px 14px;border:3px solid var(--ink);border-radius:16px;background:#fff;color:#2b2a4c}
+.goal{display:flex;gap:12px;align-items:center;background:var(--okbg);border:3px dashed var(--ink);border-radius:18px;padding:12px;margin:10px 0}
+.goal span{font-size:38px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.tab{font:inherit;font-weight:800;color:#2b2a4c;border:3px solid var(--ink);border-radius:16px;padding:6px 14px;background:#fff;cursor:pointer}
+.tab.on{background:var(--g);transform:translateY(3px)}
+.info{background:var(--nobg);border:3px solid var(--ink);border-radius:18px;padding:12px 14px;min-height:96px;animation:pop .3s}
+.chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;margin:12px 0}
+.chain b{font-size:44px;background:#fff;border:3px solid var(--ink);border-radius:50%;width:70px;height:70px;display:grid;place-items:center;animation:bob 2.4s ease-in-out infinite;color:#2b2a4c}
+.chain em{font-style:normal;font-size:30px;color:var(--r);font-weight:800}
+.slots{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;margin:10px 0}
+.slot{width:72px;height:72px;border:3px dashed var(--ink);border-radius:50%;display:grid;place-items:center;font-size:42px;background:#fff;color:#2b2a4c}
+.slot.f{border-style:solid;background:var(--okbg);animation:pop .4s}
+.tiles{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.tile{font:inherit;font-weight:800;color:#2b2a4c;background:var(--y);border:3px solid var(--ink);border-radius:18px;padding:8px 12px;font-size:17px;box-shadow:0 4px 0 var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.tile span{font-size:38px}.tile.done{visibility:hidden}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+.msg{margin-top:12px;border:3px solid var(--ink);border-radius:18px;padding:10px 14px;font-weight:700;animation:pop .35s}
+.msg.ok{background:var(--okbg)}.msg.no{background:var(--nobg)}
+.q{font-size:22px;font-weight:700;margin:8px 0 12px}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-weight:700;color:#2b2a4c;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:10px 14px;margin:8px 0;cursor:pointer;box-shadow:0 4px 0 var(--ink)}
+.opt:hover:not(:disabled){background:var(--y)}
+.opt.right{background:var(--g)}.opt.wrong{background:var(--r)}
+.opt:disabled{cursor:default}
+.pill{display:inline-block;background:var(--b);color:#fff;border:3px solid var(--ink);border-radius:20px;padding:2px 14px;font-weight:800}
+.score{font-size:64px;font-weight:800;text-align:center}
+.stars{font-size:44px;text-align:center;letter-spacing:4px}
+.conf{position:fixed;top:-30px;font-size:28px;pointer-events:none;animation:fall 1.8s ease-in forwards;z-index:9}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (max-width:480px){h1{font-size:28px}.chain b{width:54px;height:54px;font-size:32px}.slot{width:56px;height:56px;font-size:32px}.hero{font-size:62px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="cloud" style="top:6%">☁️</div><div class="cloud" style="top:30%;animation-delay:-14s;font-size:44px">☁️</div>
+<div id="app"><div class="bar"><i id="pb"></i></div><div id="v"></div></div>
+<script>
+var S=0,name='',qi=0,score=0,answered=false,tab=0,order=[],chainOK=0,tiles=[];
+var CH=[['🌱','Rumput'],['🦗','Belalang'],['🐸','Katak'],['🐍','Ular'],['🦅','Elang']];
+var TABS=[
+['🌱 Produsen','<b>Produsen</b> membuat makanan sendiri dengan bantuan sinar matahari ☀️. Contoh: rumput, padi, dan pohon. Mereka adalah awal rantai makanan!'],
+['🐛 Konsumen','<b>Konsumen</b> tidak bisa membuat makanan sendiri, jadi harus makan makhluk lain. Pemakan tumbuhan: <b>herbivora</b> 🐄. Pemakan daging: <b>karnivora</b> 🦁. Pemakan keduanya: <b>omnivora</b> 🐔.'],
+['🍄 Pengurai','<b>Pengurai</b> seperti jamur dan bakteri mengubah sisa makhluk hidup yang mati menjadi tanah yang subur 🌍. Tanah itu dipakai tumbuhan untuk tumbuh lagi!']];
+var Q=[
+['Makhluk hidup yang bisa membuat makanan sendiri disebut ...',['Konsumen','Produsen','Pengurai','Karnivora'],1,'Produsen, seperti tumbuhan hijau, membuat makanan sendiri dengan bantuan sinar matahari.'],
+['Sumber energi utama untuk semua rantai makanan adalah ...',['Matahari ☀️','Air 💧','Tanah 🌍','Angin 🍃'],0,'Matahari memberi energi pada tumbuhan, lalu energi berpindah ke hewan yang memakannya.'],
+['Rantai makanan yang benar adalah ...',['Elang → Ular → Tikus → Padi','Padi → Tikus → Ular → Elang','Tikus → Padi → Elang → Ular','Ular → Padi → Tikus → Elang'],1,'Rantai makanan selalu dimulai dari tumbuhan: Padi → Tikus → Ular → Elang.'],
+['Hewan pemakan tumbuhan disebut ...',['Karnivora','Omnivora','Herbivora','Produsen'],2,'Herbivora hanya makan tumbuhan, contohnya sapi dan belalang.'],
+['Belalang memakan rumput. Belalang termasuk ...',['Produsen','Konsumen','Pengurai','Matahari'],1,'Belalang tidak membuat makanan sendiri, jadi ia adalah konsumen.'],
+['Ayam makan biji-bijian dan cacing. Ayam termasuk ...',['Herbivora','Karnivora','Omnivora','Pengurai'],2,'Omnivora memakan tumbuhan dan hewan sekaligus.'],
+['Jamur dan bakteri yang menguraikan sisa makhluk mati disebut ...',['Produsen','Konsumen','Herbivora','Pengurai'],3,'Pengurai mengubah sisa makhluk mati menjadi zat hara untuk tanah.'],
+['Tanda panah (→) dalam rantai makanan menunjukkan ...',['Siapa yang lebih kuat','Siapa yang lebih besar','Arah perpindahan makanan dan energi','Tempat tinggal hewan'],2,'Panah berarti "dimakan oleh" dan menunjukkan ke mana energi berpindah.'],
+['Jika semua ular di sawah punah, jumlah tikus akan ...',['Menjadi berkurang','Bertambah banyak','Tetap sama','Hilang semua'],1,'Tanpa pemangsa, tikus berkembang biak lebih banyak. Semua makhluk hidup saling terhubung!'],
+['Manakah hewan karnivora?',['Kelinci 🐰','Sapi 🐄','Singa 🦁','Kambing 🐐'],2,'Singa hanya memakan daging, jadi ia karnivora.']];
+var OK=['Hebat sekali! Kamu pintar! 🌟','Luar biasa! Jawabanmu tepat! 🎉','Kerja bagus! Kamu keren! 👏','Mantap! Terus pertahankan ya! 🏆'];
+var NO=['Tidak apa-apa, kesalahan membuat kita makin pintar. Ayo semangat! 💪','Hampir berhasil! Pelan-pelan, kamu pasti bisa di soal berikutnya! 🌈','Jangan menyerah ya, setiap percobaan membuatmu makin hebat! 🚀'];
+var $=function(i){return document.getElementById(i)};
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
+function confetti(){var e=['🎉','⭐','🌟','🎈','🍀'];for(var i=0;i<18;i++){var d=document.createElement('div');d.className='conf';d.textContent=pick(e);d.style.left=Math.random()*95+'vw';d.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(d);setTimeout(function(x){x.remove()},2600,d)}}
+function nav(back,next,nl){return '<div class="nav">'+(back?'<button class="btn s" onclick="go(-1)">⬅️ Kembali</button>':'<span></span>')+(next?'<button class="btn g" id="nx" onclick="go(1)">'+(nl||'Lanjut ➡️')+'</button>':'')+'</div>'}
+function go(d){S+=d;render()}
+function render(){
+ var h='',tot=5,p=[0,1,2,3,4+qi/10,5][S];
+ if(S==0){h='<div class="hero">🌱🦗🐸🐍🦅</div><h1 class="c">Petualangan Rantai Makanan</h1><p class="c"><span class="pill">IPAS · Kelas 5 SD</span></p><p class="c">Halo, teman petualang! Siapa namamu?</p><input type="text" id="nm" placeholder="Tulis namamu di sini..." value="'+esc(name)+'" aria-label="Nama"><div class="nav"><span></span><button class="btn g" onclick="name=$(\'nm\').value.trim();go(1)">Mulai petualangan 🚀</button></div>'}
+ if(S==1){h='<h2>🎯 Tujuan Belajar</h2><p>Hai '+esc(name||'teman')+'! Setelah petualangan ini, kamu bisa:</p><div class="goal"><span>🔗</span><div>Menjelaskan hubungan antar makhluk hidup yang berkaitan dengan sumber makanan dalam bentuk <b>rantai makanan</b>.</div></div><div class="goal"><span>🔍</span><div>Menyebutkan produsen, konsumen, dan pengurai.</div></div><div class="goal"><span>🧩</span><div>Menyusun rantai makanan dengan urutan yang benar.</div></div>'+nav(1,1)}
+ if(S==2){h='<h2>📖 Ayo Kenali Rantai Makanan!</h2><p>Rantai makanan adalah urutan <b>siapa memakan siapa</b> untuk mendapat energi. Lihat contohnya:</p><div class="chain">'+CH.map(function(c,i){return '<b title="'+c[1]+'" style="animation-delay:'+i*.25+'s">'+c[0]+'</b>'+(i<4?'<em>➜</em>':'')}).join('')+'</div><p class="c"><i>Rumput dimakan belalang, belalang dimakan katak, dan seterusnya.</i></p><p><b>Ketuk tombol</b> untuk mengenal tiga peran:</p><div class="tabs">'+TABS.map(function(t,i){return '<button class="tab'+(tab==i?' on':'')+'" onclick="tab='+i+';render()">'+t[0]+'</button>'}).join('')+'</div><div class="info">'+TABS[tab][1]+'</div>'+nav(1,1)}
+ if(S==3){h='<h2>🧩 Aktivitas: Susun Rantai Makanan</h2><p>Ketuk makhluk hidup sesuai urutan, mulai dari <b>produsen</b>. Siapa yang pertama?</p><div class="slots">'+CH.map(function(c,i){return (i?'<em style="color:var(--r);font-size:26px">➜</em>':'')+'<div class="slot'+(i<chainOK?' f':'')+'">'+(i<chainOK?c[0]:'?')+'</div>'}).join('')+'</div><div class="tiles" id="tl">'+tiles.map(function(i){return '<button class="tile'+(i<chainOK?' done':'')+'" onclick="tap('+i+',this)"><span>'+CH[i][0]+'</span>'+CH[i][1]+'</button>'}).join('')+'</div><div id="fb">'+(chainOK==5?'<div class="msg ok">🎉 Hebat! Kamu berhasil menyusun rantai makanan dengan benar!</div>':'')+'</div>'+nav(1,chainOK==5,'Mulai kuis 📝')}
+ if(S==4){var q=Q[qi];h='<span class="pill">Soal '+(qi+1)+' dari 10</span> <span class="pill" style="background:var(--o)">⭐ '+score+'</span><div class="q">'+q[0]+'</div>'+q[1].map(function(o,i){return '<button class="opt" onclick="ans('+i+')">'+'ABCD'[i]+'. '+o+'</button>'}).join('')+'<div id="fb"></div><div class="nav"><span></span></div>'}
+ if(S==5){var st=score>=9?3:score>=6?2:1;h='<h2 class="c">🏁 Hasil Petualanganmu</h2><div class="stars">'+'⭐'.repeat(st)+'☆'.repeat(3-st)+'</div><div class="score">'+score*10+'</div><p class="c"><b>'+esc(name||'Teman')+'</b>, kamu menjawab benar <b>'+score+'</b> dari 10 soal. '+(score>=8?'Kamu jagoan rantai makanan! 🏆':score>=6?'Bagus sekali, sedikit lagi sempurna! 🌈':'Terus berlatih ya, kamu pasti bisa lebih baik! 💪')+'</p><h2>💭 Refleksi</h2><p>Seberapa paham kamu tentang rantai makanan?</p><div class="tabs" style="justify-content:center"><button class="tab" onclick="rf(0)">😄 Sudah paham</button><button class="tab" onclick="rf(1)">🙂 Hampir paham</button><button class="tab" onclick="rf(2)">🤔 Masih bingung</button></div><div id="rm"></div><p>Tuliskan satu rantai makanan di sekitar rumahmu:</p><textarea rows="2" placeholder="Contoh: padi → tikus → ular" aria-label="Rantai makanan buatanku"></textarea><div class="nav"><button class="btn s" onclick="S=2;render()">📖 Baca materi lagi</button><button class="btn g" onclick="restart()">🔄 Main lagi</button></div>';if(score>=8)confetti()}
+ $('v').innerHTML='<div class="card" id="cd">'+h+'</div>';
+ $('pb').style.width=(p/5*100)+'%';
+ window.scrollTo(0,0);
+}
+function tap(i,el){
+ if(i==chainOK){chainOK++;var f=chainOK==5;if(f)confetti();render();var m=$('fb');if(m&&!f)m.innerHTML='<div class="msg ok">'+pick(OK)+' Selanjutnya siapa yang memakan '+CH[i][1].toLowerCase()+'?</div>'}
+ else{el.classList.add('shake');setTimeout(function(){el.classList.remove('shake')},450);$('fb').innerHTML='<div class="msg no">Belum tepat, tidak apa-apa! Ingat: rantai dimulai dari produsen, lalu dimakan oleh konsumen. Coba lagi ya! 💪</div>'}
+}
+function ans(i){
+ if(answered)return;answered=true;var q=Q[qi],b=document.querySelectorAll('.opt'),ok=i==q[2];
+ b.forEach(function(x,j){x.disabled=true;if(j==q[2])x.classList.add('right');});
+ if(ok){score++;confetti()}else{b[i].classList.add('wrong','shake')}
+ $('fb').innerHTML='<div class="msg '+(ok?'ok':'no')+'">'+(ok?pick(OK):pick(NO)+'<br>Jawaban yang tepat: <b>'+esc(q[1][q[2]])+'</b>.')+'<br><small>💡 '+q[3]+'</small></div><div class="nav"><span></span><button class="btn g" onclick="nextQ()">'+(qi==9?'Lihat hasil 🏁':'Soal berikutnya ➡️')+'</button></div>';
+}
+function nextQ(){answered=false;if(qi==9){S=5}else qi++;render()}
+function rf(k){$('rm').innerHTML='<div class="msg '+(k?'no':'ok')+'">'+['Wow, hebat! Coba ajarkan temanmu agar ia juga paham ya! 🌟','Bagus, sedikit lagi! Baca materi sekali lagi, kamu pasti bisa! 🌈','Tidak apa-apa, bingung itu bagian dari belajar. Tanyakan ke gurumu atau main lagi ya, semangat! 💪'][k]+'</div>'}
+function restart(){S=0;qi=0;score=0;answered=false;chainOK=0;shuf();render()}
+function shuf(){tiles=[0,1,2,3,4].sort(function(){return Math.random()-.5})}
+shuf();render();
+</script>
+</body>
+</html>
